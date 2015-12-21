@@ -1,14 +1,21 @@
 Logo Writer OnLine
 -------------------
 
-Интерпретатор языка Logo, сделанный для замены Logo Writer, предназначенного для DOS.
-Сохранён стиль исходной программы, вплоть до поддержки исходных багов.
-Используется для обучния учеников 5-х классов в ФМЛ № 31 города Челябинска.
-Работоспособность гарантируется в Google Chrome, в остальных браузерах возможности программы ограниченны
+РРЅС‚РµСЂРїСЂРµС‚Р°С‚РѕСЂ СЏР·С‹РєР° Logo, СЃРґРµР»Р°РЅРЅС‹Р№ РґР»СЏ Р·Р°РјРµРЅС‹ Logo Writer, РїСЂРµРґРЅР°Р·РЅР°С‡РµРЅРЅРѕРіРѕ РґР»СЏ DOS
+
+РЎРѕС…СЂР°РЅС‘РЅ СЃС‚РёР»СЊ РёСЃС…РѕРґРЅРѕР№ РїСЂРѕРіСЂР°РјРјС‹, РІРїР»РѕС‚СЊ РґРѕ РїРѕРґРґРµСЂР¶РєРё РёСЃС…РѕРґРЅС‹С… Р±Р°РіРѕРІ
+
+РСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ РґР»СЏ РѕР±СѓС‡РЅРёСЏ СѓС‡РµРЅРёРєРѕРІ 5-С… РєР»Р°СЃСЃРѕРІ РІ Р¤РњР› в„– 31 РіРѕСЂРѕРґР° Р§РµР»СЏР±РёРЅСЃРєР°
+
+Р Р°Р±РѕС‚РѕСЃРїРѕСЃРѕР±РЅРѕСЃС‚СЊ РіР°СЂР°РЅС‚РёСЂСѓРµС‚СЃСЏ РІ Google Chrome, РІ РѕСЃС‚Р°Р»СЊРЅС‹С… Р±СЂР°СѓР·РµСЂР°С… РІРѕР·РјРѕР¶РЅРѕСЃС‚Рё РїСЂРѕРіСЂР°РјРјС‹ РѕРіСЂР°РЅРёС‡РµРЅРЅС‹
 
 
-Interpreter of the Logo language, that was made as a replacement for the DOS program Logo Writer.
+
+Interpreter of the Logo language, that was made as a replacement for the DOS program Logo Writer
 (Appearance of the original programm was saved)
+
 Logo Writer Online is used for studying pupils of 5th grade in the 31st Lyceum in Chelyabinsk, Russia
+
 This program was made for Google Chrome, in another browsers some features may be unavailable
 
+![alt tag](https://github.com/danilkolikov/logowriter/raw/master/splash.png)
