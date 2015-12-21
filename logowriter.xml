@@ -330,7 +330,7 @@
 		<!-- Заставка -->
 
 		<div id = "splash" class = "window" onclick = "changeWindow(1, 0)">
-			<img src = "https://github.com/danilkolikov/logowriter/raw/master/splash.png">
+			<img src = "https://cdn.rawgit.com/danilkolikov/logowriter/raw/master/splash.png">
 		</div>
 
 		<!-- Для сохранения -->
@@ -340,7 +340,7 @@
 		<script src="https://cdn.rawgit.com/danilkolikov/logowriter/master/shell.js"></script>
 
 
-		<script src = "https://github.com/danilkolikov/logowriter/raw/master/shapeMaker.js"></script>
+		<script src = "https://cdn.rawgit.com/danilkolikov/logowriter/raw/master/shapeMaker.js"></script>
 		<input type = "button" onclick = "makeAlert()" value = "Готово" hidden>
 	</body>
 </html>
