@@ -1,0 +1,185 @@
+* {
+    font-family: helvetica;
+    overflow: hidden;
+}
+
+textarea {
+    font-weight: bold;
+    color: #A8A8A8;
+    resize: none;
+    border: 0;
+    width: 640px;
+    height: 380px;
+    overflow: auto;
+}
+
+div {
+    width: 640px;
+}
+
+#text li {
+    margin-left: -10px;
+    outline: 0 solid transparent;
+}
+
+body {
+    margin: 0;
+}
+
+.highlight {
+    background-color: #A800A8;
+    height: 20px;
+    text-align: center;
+    color: black;
+    font-weight: bold;
+}
+
+.window {
+    background-color: #000000;
+    height: 380px;
+    width: 640px;
+    border: 0;
+    position: absolute;
+    margin-top: 20px;
+    z-index: -1;
+    color: #a8a8a8;
+    font-size: 20px;
+    font-weight: bold;
+    overflow-y: auto;
+}
+
+.image {
+    vertical-align: top;
+    cursor: pointer;
+}
+
+#splash {
+    margin-top: 0;
+    height: 480px;
+}
+
+#caption {
+    position: absolute;
+    text-align: center;
+    background-color: transparent;
+    color: #A800A8;
+    height: 20px;
+    font-weight: bold;
+    font-size: 20px;
+    z-index: 2;
+}
+
+#backC {
+    text-align: right;
+    margin-top: 0;
+    position: absolute;
+    z-index: 2;
+}
+
+#overlay {
+    position: absolute;
+    background-color: transparent;
+}
+
+#textlayer {
+    position: absolute;
+    background-color: transparent;
+    font-size: 20px;
+    line-height: 1;
+    height: 380px;
+}
+
+#back-text {
+    background-color: black;
+    height: 380px;
+}
+
+#text {
+    margin-top: 0;
+    margin-bottom: 0;
+    width: 600px;
+    height: 60px;
+    background-color: #000;
+    color: #A8A8A8;
+    font-weight: bold;
+    border: 0;
+    font-size: 15px;
+    line-height: 1;
+    overflow-y: hidden;
+    list-style-type: none;
+}
+
+#shapeList, #shapeList tr, #shapeList td {
+    color: inherit;
+    font: inherit;
+    border: 16px solid black;
+}
+
+#shapeList td {
+    vertical-align: middle;
+    height: 32px;
+    width: 64px;
+}
+
+#shapeMaker {
+    border-collapse: collapse;
+    margin: 0 auto;
+    border: 0px;
+    outline: #00a8a8 solid 8px;
+}
+
+#shapeMaker td {
+    padding: 0;
+    width: 18px;
+    height: 20px;
+    border-width: 2px;
+    border-style: solid;
+}
+
+#nav {
+    margin: 0 auto;
+    width: 640px;
+}
+
+#nav td {
+    font-size: 20px;
+    font-weight: bold;
+    color: #000;
+    height: 32px;
+    width: 64px;
+    text-align: center;
+    background-color: #a8a8a8;
+}
+
+#nav td:hover {
+    background-color: #a800a8;
+    cursor: pointer;
+}
+
+.mItem:hover {
+    cursor: pointer;
+}
+
+.cellCanvas {
+    position: absolute;
+    margin-left: 32px;
+    margin-top: -32px;
+}
+
+::-webkit-scrollbar {
+    display: none;
+}
+
+textarea:focus {
+    outline: none;
+}
+
+ul:focus {
+    outline: none;
+}
+
+::selection {
+    color: #000;
+    background-color: #FFF;
+}
+
