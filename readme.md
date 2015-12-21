@@ -1,6 +1,7 @@
 Logo Writer OnLine
 -------------------
 
+
 Интерпретатор языка Logo, сделанный для замены Logo Writer, предназначенного для DOS
 
 Сохранён стиль исходной программы, вплоть до поддержки исходных багов
@@ -11,8 +12,11 @@ Logo Writer OnLine
 
 
 
-Interpreter of the Logo language, that was made as a replacement for the DOS program Logo Writer
-(Appearance of the original programm was saved)
+
+
+
+The interpreter of the Logo language, that was made as a replacement for the DOS program Logo Writer
+(Appearance of the original program was saved)
 
 Logo Writer Online is used for studying pupils of 5th grade in the 31st Lyceum in Chelyabinsk, Russia
 

@@ -7,10 +7,10 @@
 	<head>
 		<meta charset = "UTF-8">
 		<title>Logo</title>
-		<link rel="stylesheet" type="text/css" href="https://raw.githubusercontent.com/danilkolikov/logowriter/master/logo.css">
-		<script src = "https://raw.githubusercontent.com/danilkolikov/logowriter/master/logo.js"></script>
-		<script src = "https://raw.githubusercontent.com/danilkolikov/logowriter/master/cmd.js"></script>
-		<script src = "https://raw.githubusercontent.com/danilkolikov/logowriter/master/shapes.js"></script>
+		<link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/danilkolikov/logowriter/master/logo.css">
+		<script src = "https://cdn.rawgit.com/danilkolikov/logowriter/master/logo.js"></script>
+		<script src = "https://cdn.rawgit.com/danilkolikov/logowriter/master/cmd.js"></script>
+		<script src = "https://cdn.rawgit.com/danilkolikov/logowriter/master/shapes.js"></script>
 	</head>
 	<body onload = "init()">
 		<!-- Экран справки -->
@@ -337,7 +337,7 @@
 		<a id = "saveFile" hidden></a>
 
 
-		<script src="https://raw.githubusercontent.com/danilkolikov/logowriter/master/shell.js"></script>
+		<script src="https://cdn.rawgit.com/danilkolikov/logowriter/master/shell.js"></script>
 
 
 		<script src = "https://github.com/danilkolikov/logowriter/raw/master/shapeMaker.js"></script>
