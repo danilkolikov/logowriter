@@ -1,8 +1,7 @@
 /* "Оболочка" Logo */
 
-//Глобальные переменные
+// Глобальные переменные
 // Получаем элементы страницы
-
 function $(s) {
     return document.getElementById(s);
 }
@@ -12,6 +11,7 @@ var overcanvas = $("overlay");
 var overlay = overcanvas.getContext("2d"); // Поле для черепашки
 var field = canvas.getContext("2d"); // Поле для рисования
 var backText = $("back-text"); // Код на изнанке
+var saveFile = $("saveFile");
 
 // Окна программы
 var windows = [];
@@ -43,9 +43,7 @@ var captions = ["", "Оглавление", "???", "???", "Справка", "Н�
 
 var textLayer = $("textlayer"); // Слой с текстом
 var data = []; // Массив для хранения изображения
-var curCmds = [];  //Список комманд для выполнения
 var letsBreak; // Прерывание отрисовки по нажатию ctrl+c
-var textFocus = false;
 var curWindow = 0; // Текущее окно
 var changed;
 var loaded;
@@ -53,15 +51,9 @@ var tick; // Интервал
 var activeTimer = false; // Запущен ли таймер
 var correct; // Корректность введенных команд (для перевода в ОПН)
 var range; // Сохранение выделения
-
-//Обработчик нажатия клавиш
-var readChar; // Считываем нажатие одной клавиши
-var readList; // Считываем нажатие нескольких клавиш
-var charLine = ""; // Считанные символы]
 var selection = window.getSelection(); // Выделенная строка
 
-// Символ неразрывного пробела
-//var nbsp = $("nbsp").innerText;
+// Default scrolling position
 text.children[0].n = 0;
 
 /* Для имитации медленной работы процессора, я выполняю все команды
@@ -69,42 +61,16 @@ text.children[0].n = 0;
  * в рекурсивном алгоритме. Поэтому я имитирую рекурсию с помощью стеков
  */
 
-var scope; // Стек областей видимости
-var line; // Стек выполняемых строк (Для поддержки repeat и иже с ними)
-var cur; // Стек счетчиков в строках
-var stack; // Стек стеков (Yo dawg!)
-clearStacks();
-function pushAll(tScope, tLine) {
-    scope.push(tScope);
-    line.push(tLine);
-    cur.push(0);
-    stack.push([]);
-}
-function popAll() {
-    scope.length--;
-    line.length--;
-    cur.length--;
-    stack.length--;
-}
-function clearStacks() {
-    scope = [];
-    line = [];
-    cur = [];
-    stack = [];
-}
-
 // Сменить окно (куда, откуда)
 function changeWindow(e, s) {
     for (var i = 0; i < windows.length; i++)
         windows[i].style.zIndex = -1;
     windows[e].style.zIndex = 1;
     caption.innerHTML = captions[e];
-    text.contentEditable = false;
+    setContentEditable(false);
     text.style.backgroundColor = "#000";
     switch (e) {
         case 2:
-            if (!cur.top)
-                text.contentEditable = true;
             if (!changed)
                 initLogo();
             text.style.backgroundColor = defaultColor;
@@ -136,12 +102,15 @@ function changeWindow(e, s) {
             $("input").style.zIndex = 1;
             break;
         case 3:
-            getCommands(backText.value, "get");
+            try {
+                collect(backText.value);
+            } catch(e) {
+                sendError(e);
+            }
             showBackCaption();
             break;
         case 6:
-            if (cur.top)
-                setTimeout(fastAnalyze, 82);
+            setTimeout(slowExecution, 82);
             break;
         case 7:
             shapes[curN] = [];
@@ -176,7 +145,6 @@ for (var i = 3; i < 7; i++) {
     windows[1].children[i].onmouseout = removeHighlight;
 }
 
-
 for (var i = 2; i < 8; i++) {
     helpPages[0].children[i].onmouseover = highlightText;
     helpPages[0].children[i].onmouseout = removeHighlight;
@@ -205,14 +173,6 @@ function getKeyBody(e) {
         return;
     }
 
-    if (readList && id == 13) {
-        stack.top.push(["a", [charLine]]);
-        textLayer.value += "\n";
-        readList = false;
-        charLine = "";
-        setTimeout(fastAnalyze, 4);
-    }
-
     if (id == 27) {
         if (lastWindow.length == 0)
             return;
@@ -220,7 +180,7 @@ function getKeyBody(e) {
             saveFile.href = encodeFile();
             saveFile.download = captions[2] + ".log";
             saveFile.click();
-            changeWindow(2, 1);
+            changeWindow(1, 2);
             e.preventDefault();
             return;
         }
@@ -229,7 +189,7 @@ function getKeyBody(e) {
             for (var i = 0; i < text.childElementCount; i++)
                 if (check(text.children[i]))
                     text.children[i].remove();
-            sendError(12);
+            sendError(new Exception(12));
             return;
         }
 
@@ -239,11 +199,10 @@ function getKeyBody(e) {
     }
 
     if (curWindow == 2 && e.ctrlKey && id == 83) {
-        sendError(13);
+        sendError(new Exception(13));;
         e.preventDefault();
 
     }
-
 }
 document.body.onkeydown = getKeyBody;
 // Проверка строки на содержание ошибки
@@ -356,7 +315,6 @@ function getKeyText(e) {
             return;
         }
 
-
         /* Если же строка содержит команду, то удаляем все строчки
          /* с ошибками */
         for (var i = 0; i < text.childElementCount; i++)
@@ -364,6 +322,7 @@ function getKeyText(e) {
                 text.children[i].remove();
 
         // Обрабатываем команду
+        setContentEditable(false);
         getCommands(cur.innerText);
         e.preventDefault();
         return;
@@ -372,47 +331,23 @@ function getKeyText(e) {
     if (e.ctrlKey && id == 70) {
         changeWindow(3, 2);
         e.preventDefault();
-        return;
     }
 }
 text.onkeydown = getKeyText;
-
-// Обработка readchar и readlist отдельно
-document.body.onkeypress = function (e) {
-    var id = e.keyCode;
-    if (readChar || readList) {
-        if ((id > 47 && id < 58) || (id > 64 && id < 91) || (id > 94 && id < 123))
-            charLine += String.fromCharCode(id);
-        else charLine += " ";
-
-        if (readChar) {
-            stack.top.push(["s", charLine]);
-            readChar = false;
-        }
-        if (readList && id != 13) {
-            textLayer.value += charLine.top;
-            return;
-        }
-        charLine = "";
-        setTimeout(fastAnalyze, 0);
-        return;
-    }
-};
 
 backText.onkeydown = function (e) {
     if (e.ctrlKey && e.keyCode == 70) {
         changeWindow(2, 3);
         e.preventDefault();
-        return;
     }
 };
 
 // Получаем текущую строку
 function getCurrent() {
     var res = selection.baseNode;
-    while (res.tagName != "LI")
+    while (res != undefined && res.tagName != "LI")
         res = res.parentElement;
-    return res;
+    return res == undefined ? text.lastElementChild : res;
 }
 function init() {
     splash.style.zIndex = 1;
@@ -425,6 +360,7 @@ function init() {
         img[i].fillStyle = "#a8a8a8";
         drawShape(img[i], 8, 8, decodeShape(shapes[91 + i]));
     }
+    addScope(null);     // Default scope
 }
 
 //Инициализация logo
@@ -445,6 +381,7 @@ function initLogo(name, x, y, an, col, def, p, e) {
     pen = p || true;
     eraser = e ? e : false;
     changed = false;
+    setContentEditable(true);
 }
 
 function changeHelpWindow(s) {
@@ -495,37 +432,59 @@ for (var i = 0; i < 3; i++)
     navButtons[i].addEventListener("click", navigation);
 //Перевод строки с коммандами в список комманд
 
-function getCommands(s, p) {
-    //Разбиение на токены
-    s = " " + s + " ";
-    var commands = [];
-    var signs = [" ", "\t", "\n", "[", "]", "(", ")"];
-    var i = 0;
-    while (i < s.length) {
-        var sl = "";
-        while (signs.indexOf(s[i]) == -1)
-            sl += s[i++];
-        if (sl != "")
-            commands.push(sl);
-        if (signs.indexOf(s[i]) > 2) //Добавляем скобки, знаки и \n
-            commands.push(s[i]);
-        i++;
+function setContentEditable(f) {
+    for (var i = 0; i < text.childNodes.length; i++) {
+        text.childNodes[i].contentEditable = f;
     }
-    //Если изнанка, то запоминаем процедуры:
-    if (p == "get") {
-        collect(commands);
+}
+
+function getCommands(s) {
+    //Разбиение на токены
+    var tokens = tokenize(s);
+    try {
+        var commands = parseExpressions(tokens); // Parsing...
+    } catch (e) {
+        sendError(e);
         return;
     }
-    commands = trainStation(commands, ""); // Переводим в ОПН
+
     letsBreak = false;
-    clearStacks();
-    pushAll("", commands);
+    addQueue(commands);
+
     // Сохраняем выделение
     range = selection.getRangeAt(0);
-    text.contentEditable = false;
+    setContentEditable(false);
     text.blur();
     activeTimer = true;
-    tick = setTimeout(fastAnalyze, 0); // Обрабатываем команды
+    tick = setTimeout(slowExecution, 0); // Обрабатываем команды
+}
+
+function typeToString(t) {
+    switch (t) {
+        case Type.NUMBER:
+            return "число";
+        case Type.STRING:
+            return "строку";
+        case Type.LIST:
+            return "список";
+        case Type.BOOL:
+            return "логическое значение";
+    }
+}
+
+function toString(t) {
+    switch (t.type) {
+        case Type.NUMBER:
+        case Type.String:
+            return t.value;
+        case Type.BOOL:
+            return t.value ? "ИСТИНА" : "ЛОЖЬ";
+        case Type.LIST:
+            var mes = "";
+            for (var i = 0; i < t.value.length; i++)
+                mes += toString(t.value[i]()) + " ";
+            return mes.substring(0, mes.length - 1);
+    }
 }
 
 // Расшифровка типов данных
@@ -542,55 +501,51 @@ function makeMes(s) {
             mes += (s[1]) ? "ИСТИНА" : "ЛОЖЬ";
             break;
         case "a":
-            var mes = "";
-            for (var i = 0; i < s[1].length; i++)
-                mes += s[1][i] + " ";
-            mes = mes.substring(0, mes.length - 1);
-            break;
+
     }
     return mes;
 }
 
 // Ловля ошибок
-function sendError(n) {
+function sendError(e) {
     // Останавливаем выполнение программы
     letsBreak = true;
     correct = false;
     var mes = "";
-    var a = arguments;
-    switch (n) {
+    var extra = e.extra;
+    switch (e.code) {
         case 0:
             mes = "Не могу разделить на 0";
             break;
         case 1:
-            mes = a[1] + " не на месте";
+            mes = extra + " не на месте";
             break;
         case 2:
-            mes = a[1] + " не хватает входных данных";
+            mes = extra + " не хватает входных данных";
             break;
         case 3:
-            mes = a[1] + " не допускает " + makeMes(a[2]) + " на входе";
+            mes = extra[0] + " не допускает " + typeToString(extra[1]) + " на входе";
             break;
         case 4:
-            mes = a[1] + " не присвоено значение";
+            mes = extra + " не присвоено значение";
             break;
         case 5:
-            mes = "Не знаю, как выполнить " + a[1];
+            mes = "Не знаю, как выполнить " + extra;
             break;
         case 6:
-            mes = "Не знаю, что делать с " + makeMes(a[1]);
+            mes = "Не знаю, что делать с " + extra;
             break;
         case 7:
-            mes = "Не могу использовать " + a[1] + " как команду";
+            mes = "Не могу использовать " + extra + " как команду";
             break;
         case 8:
-            mes = a[1] + " является именем примитива";
+            mes = extra + " является именем примитива";
             break;
         case 9:
             mes = "Слишком много рекурсии";
             break;
         case 10:
-            mes = "Команда " + a[1] + " не реализована";
+            mes = "Команда " + extra + " не реализована";
             break;
         case 11:
             mes = "Имя страницы должно содержать не более 8 символов";
@@ -601,14 +556,20 @@ function sendError(n) {
         case 13:
             mes = "Прервана!!!";
             break;
+        case 14:
+            mes = "Процедура не заканичвается на end";
+            break;
+        case 15:
+            mes = extra[0] + " не допускает " + toString(extra[1]) + " на входе";
+            break;
     }
-    if (scope != undefined && scope.top != "" && scope.top != undefined)
-        mes += " в " + scope.top;
+    if (getScope().name != null)
+        mes += " в " + getScope().name;
     showError(mes);
 }
 
 function showError(s) {
-    var cur = (range) ? range.commonAncestorContainer : selection.baseNode;
+    var cur = getCurrent();
 
     while (cur.parentElement != text) {
         cur = cur.parentElement;
@@ -616,7 +577,6 @@ function showError(s) {
             return;
     }
     var line = document.createElement('li');
-    line.contentEditable = true;
     line.n = cur.n + 1;
     var mes = document.createElement('span');
     mes.style.color = "#A800A8";
@@ -624,65 +584,24 @@ function showError(s) {
     line.appendChild(mes);
     text.insertBefore(line, cur.nextElementSibling);
     text.scrollTop = line.n * 15
+    setContentEditable(true);
 }
 
 //Сборка подпрограмм пользователя
 function collect(s) {
-    names.length = stCom;
-    args.length = stCom;
-    cmd.length = stCom;
-    argNames.length = 0;
-    bodies.length = 0;
-    // Собираем процедуры, начинающиеся с to
-    for (var i = 0; i < s.length; i++)
-        if (s[i] == "to") {
-            correct = true;
-            if (i++ == s.length) {
-                continue;
-            }
-            var name = s[i++];
-            if (indexOf(name, names) <= stCom) {
-                sendError(8, "", name);
-                return;
-            }
-            var varNames = []; // Список переменных
-            var arguments = [0]; // Список аргументов
-
-            // Собираем переменные
-            while (s[i] != "\n" && i < s.length) {
-                var st = (inList(s[i][0], '"', ":")) ? 1 : 0;
-                varNames.push(s[i].slice(st));
-                arguments.push("u");
-                i++;
-            }
-            arguments[0] = varNames.length;
-
-            /* Для поддержки рекурсивных подпрограмм
-             /* Заношу имя и к-во аргументов до обработки команд */
-            names.push([name]);
-            args.push(arguments);
-
-
-            // Собираем команды
-            var commands = [];
-            i++;
-            while (s[i] != "end" && i < s.length)
-                commands.push(s[i++]);
-            commands = trainStation(commands, name); // Переводим в ОПН
-
-            if (!correct) {
-                names.length--;
-                args.length--;
-                continue;
-            }
-            // Запоминаем
-            cmd.push(null);
-            argNames.push(varNames);
-            bodies.push(commands);
+    s = tokenize(s);
+    commands = commands.slice(0, commandsLength);
+    var iter = new Iterator(s);
+    while (iter.hasNext()) {
+        var func = parseFunction(iter);
+        if (findCommand(func.names[0], commands) != null) {
+            throw new Exception(8, func.names[0]);
         }
+        commands.push(func);
+    }
 }
 
-// Запись информации о файле
+// Запись информации в файле
 function encodeFile() {
     // Текущие параметры черепашки
     var par = "" + stX + " " + stY + " " + angle + " " + curColorN +
@@ -716,18 +635,10 @@ function encodeFile() {
     for (var i = 0; i < text.children.length; i++)
         if (!check(text.children[i]))
             cmds += text.children[i].innerHTML + "\n";
-    console.log(cmds);
-    // Запоминаем переменные
-    var vars = "";
-    for (var i = 0; i < variables[0].length; i++)
-        vars += variables[0][i][0] + " " + variables[0][i][1][0] + " "
-        + makeMes(variables[0][i][1]) + "\n";
-    console.log(vars);
+
     var out = captions[2] + "\r" + field + "\r" + par + "\r" +
-        cmds + "\r" + textLayer.innerHTML + "\r" + backText.value + "\r" +
-        vars;
-    var link = "data:application/octet-stream," + encodeURIComponent(out);
-    return link;
+        cmds + "\r" + textLayer.innerHTML + "\r" + backText.value + "\r";
+    return "data:application/octet-stream," + encodeURIComponent(out);
 }
 
 function decodeFile(s) {
@@ -785,38 +696,18 @@ function decodeFile(s) {
         var l = document.createElement("li");
         l.innerHTML = lines[i] || "";
         l.n = i;
+        l.contentEditable = true;
         text.appendChild(l);
     }
     text.scrollTop = lines.length * 15;
     textLayer.value = str[4];
     backText.value = str[5];
-    getCommands(str[5], "get");
-    var vars = str[6].split("\n");
-    for (var i = 0; i < vars.length; i++)
-        if (vars[i] != "") {
-            var vals = vars[i].split(" ");
-            var name = vals[0];
-            var type = vals[1];
-            var value;
-            switch (type) {
-                case "n":
-                    value = +vals[2];
-                    break;
-                case "s":
-                    value = vals[2];
-                    break;
-                case "b":
-                    value = vals[2] == "ИСТИНА";
-                    break;
-                case "a":
-                    value = [];
-                    for (var j = 2; j < vals.length; j++)
-                        if (vals[j] != "")
-                            value.push(vals[j]);
-                    break;
-            }
-            variables[0].push([name, [type, value]]);
-        }
+
+    try {
+        collect(str[5]);
+    } catch (e) {
+        sendError(e);
+    }
 }
 
 // Зaгрузка из файла

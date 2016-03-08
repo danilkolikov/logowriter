@@ -8,8 +8,9 @@
 		<meta charset = "UTF-8">
 		<title>Logo</title>
 		<link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/danilkolikov/logowriter/master/logo.css">
+		<script src = "https://cdn.rawgit.com/danilkolikov/logowriter/master/base.js"></script>
+        <script src = "https://cdn.rawgit.com/danilkolikov/logowriter/master/parser.js"></script>
 		<script src = "https://cdn.rawgit.com/danilkolikov/logowriter/master/logo.js"></script>
-		<script src = "https://cdn.rawgit.com/danilkolikov/logowriter/master/cmd.js"></script>
 		<script src = "https://cdn.rawgit.com/danilkolikov/logowriter/master/shapes.js"></script>
 	</head>
 	<body onload = "init()">
@@ -168,10 +169,7 @@
 				</ul>
 				<i>Ввод / Вывод</i>
 				<ul>
-					<li>READCHAR - считать символ с клавиатуры. Возвращает слово</li>
-					<li>READLIST - считывать символы с клавиатуры до нажатия клавиши ENTER. Возвращает список</li>
-					<li>PRINT + A (что угодно) - вывести значение А на экран</li>
-					<li>CT - стереть весь текст с экрана</li>
+				    <li>READWORD + S (слово) - считать строку с клавиатуры. Возвращает слово</li>
 				</ul>
 				<i>Математические и логические операторы</i>
 				<ul>
